@@ -3,7 +3,7 @@ module github.com/theramindex/silo-plugin-local-artwork
 go 1.26.0
 
 require (
-	github.com/Silo-Server/silo-plugin-sdk v0.30.0
+	github.com/Silo-Server/silo-plugin-sdk v0.32.1
 	google.golang.org/grpc v1.83.2
 	google.golang.org/protobuf v1.36.11
 )
