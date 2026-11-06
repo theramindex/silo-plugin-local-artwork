@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -110,11 +111,17 @@ func (p *Provider) findImages(mediaPath string) []Image {
 			continue
 		}
 		candidate.path = actualCasePath(candidate.path)
-		if resolved, ok := p.safeImagePath(candidate.path); ok && hasImageContent(resolved) {
-			images = append(images, Image{Kind: candidate.kind, Path: candidate.path})
-			if candidate.posterVariant {
-				variantSelected = true
-			}
+		resolved, ok := p.safeImagePath(candidate.path)
+		if !ok {
+			continue
+		}
+		if !hasImageContent(resolved) {
+			log.Printf("local-artwork: skipped %q: the content is not a PNG, JPEG, or WebP image", candidate.path)
+			continue
+		}
+		images = append(images, Image{Kind: candidate.kind, Path: candidate.path})
+		if candidate.posterVariant {
+			variantSelected = true
 		}
 	}
 	return images
@@ -206,7 +213,23 @@ func (p *Provider) safeImagePath(path string) (string, bool) {
 		return "", false
 	}
 	leaf, err := os.Lstat(path)
-	if err != nil || leaf.Mode()&os.ModeSymlink != 0 || !leaf.Mode().IsRegular() || leaf.Size() <= 0 || leaf.Size() > maxDataURLImageBytes {
+	if err != nil {
+		return "", false
+	}
+	// The file exists under an artwork name, so say why it is not used;
+	// otherwise an admin has no way to tell why the artwork is missing.
+	switch {
+	case leaf.Mode()&os.ModeSymlink != 0:
+		log.Printf("local-artwork: skipped %q: symlinked images are not served", path)
+		return "", false
+	case !leaf.Mode().IsRegular():
+		log.Printf("local-artwork: skipped %q: not a regular file", path)
+		return "", false
+	case leaf.Size() <= 0:
+		log.Printf("local-artwork: skipped %q: the file is empty", path)
+		return "", false
+	case leaf.Size() > maxDataURLImageBytes:
+		log.Printf("local-artwork: skipped %q: %d bytes is larger than the 8 MiB limit", path, leaf.Size())
 		return "", false
 	}
 	resolved, err := filepath.EvalSymlinks(path)

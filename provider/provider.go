@@ -229,7 +229,9 @@ func debugLogPath() string {
 func (p *Provider) debugf(format string, args ...any) {
 	message := fmt.Sprintf(format, args...)
 	log.Print(message)
-	if !p.debug && !strings.Contains(message, "missing file_path") {
+	// The standard log above always records the message; the debug file is
+	// written only when diagnostics are turned on.
+	if !p.debug {
 		return
 	}
 	if p.debugLog == "" {

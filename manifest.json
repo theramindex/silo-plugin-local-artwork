@@ -47,5 +47,18 @@
     }
   ],
   "global_config_schema": [],
-  "category": "Video/Metadata"
+  "category": "Video/Metadata",
+  "presentation": {
+    "display_name": "Local Artwork",
+    "summary": "Use posters, backdrops, logos, and stills stored beside your media files.",
+    "description_markdown": "Finds PNG, JPEG, and WebP artwork next to each media file or in series and season folders, and serves it to Silo without object storage. Silo's built-in NFO provider still reads the NFO metadata.",
+    "setup_markdown": "1. In each library's metadata providers, put the built-in **NFO Files** provider first, **Local Artwork** second, and remote providers such as TMDB and TVDB after them.\n2. Refresh the library's metadata.\n\nSupported names: `<media name>-poster`, `-fanart`, `-backdrop`, `-logo`, `-thumb`, `-still` (a `.` separator works too), and folder files named `poster`, `folder`, `backdrop`, `fanart`, `logo`, `clearlogo`, `thumb`, or `still`. Images larger than 8 MiB, symlinked images, and files that are not real images are skipped.",
+    "homepage_url": "https://github.com/theramindex/silo-plugin-local-artwork",
+    "source_url": "https://github.com/theramindex/silo-plugin-local-artwork",
+    "support_url": "https://github.com/theramindex/silo-plugin-local-artwork/issues",
+    "changelog_url": "https://github.com/theramindex/silo-plugin-local-artwork/releases",
+    "publisher_name": "Ramindex",
+    "publisher_url": "https://github.com/theramindex",
+    "license_spdx": "Apache-2.0"
+  }
 }
